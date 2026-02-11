@@ -1,11 +1,11 @@
-import { motion } from 'framer-motion';
-import { ArrowDown } from 'lucide-react';
+import { motion } from "framer-motion";
+import { ArrowDown } from "lucide-react";
 
 const Hero = () => {
   const scrollToProjects = () => {
-    const target = document.querySelector('#projects');
+    const target = document.querySelector("#projects");
     if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -37,10 +37,11 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            WavyyAi bridges the gap between human creativity and artificial intelligence.
-            We design bespoke AI solutions that feel natural, not robotic, helping your
-            business flow more efficiently. Our mission is to make advanced technology
-            accessible, calming, and incredibly powerful for teams of all sizes.
+            WavyyAi bridges the gap between human creativity and artificial
+            intelligence. We design bespoke AI solutions that feel natural, not
+            robotic, helping your business flow more efficiently. Our mission is
+            to make advanced technology accessible, calming, and incredibly
+            powerful for teams of all sizes.
           </motion.p>
 
           <motion.button
@@ -48,7 +49,7 @@ const Hero = () => {
             className="group bg-gradient-to-r from-teal-500 to-cyan-500 text-slate-900 px-8 py-4 rounded-2xl font-semibold text-lg hover:shadow-xl hover:shadow-teal-500/50 transition-all duration-300"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.04, delay: 0.02 }}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -64,7 +65,7 @@ const Hero = () => {
             duration: 0.8,
             delay: 1,
             repeat: Infinity,
-            repeatType: 'reverse',
+            repeatType: "reverse",
             repeatDelay: 0.5,
           }}
         >
