@@ -35,7 +35,7 @@ const Contact = () => {
 
     try {
       await emailjs.send(
-        "service_lyh0uxq",
+        "service_84gu97h",
         "template_rwsnptp",
         templateParams,
         "7mwVH44PGougAuhTs",
