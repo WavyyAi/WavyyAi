@@ -1,28 +1,61 @@
-import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
-import { Send, Mail, User, MessageSquare } from 'lucide-react';
+import { motion, useInView } from "framer-motion";
+import { useRef, useState } from "react";
+import { Send, Mail, User, MessageSquare } from "lucide-react";
+import emailjs from "@emailjs/browser";
+
+type FormState = {
+  name: string;
+  email: string;
+  message: string;
+};
 
 const Contact = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
-  const [formState, setFormState] = useState({
-    name: '',
-    email: '',
-    message: '',
-  });
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formState, setFormState] = useState<FormState>({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // 🔥 REAL SUBMIT FUNCTION
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormState({ name: '', email: '', message: '' });
-    }, 3000);
+    setLoading(true);
+
+    const templateParams = {
+      from_name: formState.name,
+      from_email: formState.email,
+      message: formState.message,
+    };
+
+    try {
+      await emailjs.send(
+        "service_lyh0uxq",
+        "template_rwsnptp",
+        templateParams,
+        "7mwVH44PGougAuhTs",
+      );
+
+      setIsSubmitted(true);
+      setFormState({ name: "", email: "", message: "" });
+
+      setTimeout(() => setIsSubmitted(false), 3000);
+    } catch (error) {
+      console.error("Email failed:", error);
+      alert("Failed to send message");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormState({
       ...formState,
       [e.target.name]: e.target.value,
@@ -31,101 +64,73 @@ const Contact = () => {
 
   return (
     <section id="contact" className="py-32 px-6 relative" ref={ref}>
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-teal-900/10 to-transparent"></div>
-
-      <div className="max-w-4xl mx-auto relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-teal-400 to-cyan-300 bg-clip-text text-transparent">
-            Reach Out
-          </h2>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-            Let's start a conversation about how AI can transform your business
-          </p>
-        </motion.div>
-
+      <div className="max-w-4xl mx-auto">
         <motion.form
           onSubmit={handleSubmit}
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-8 md:p-12"
+          className="bg-slate-800/50 border border-slate-700 rounded-2xl p-8"
         >
           <div className="space-y-6">
+            {/* NAME */}
             <div className="relative">
-              <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
-                Your Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formState.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-slate-900/50 border border-slate-700 rounded-2xl pl-12 pr-4 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-300"
-                  placeholder="John Doe"
-                />
-              </div>
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                name="name"
+                value={formState.name}
+                onChange={handleChange}
+                required
+                placeholder="John Doe"
+                className="w-full bg-slate-900 border border-slate-700 rounded-2xl pl-12 pr-4 py-4 text-white"
+              />
             </div>
 
+            {/* EMAIL */}
             <div className="relative">
-              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formState.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full bg-slate-900/50 border border-slate-700 rounded-2xl pl-12 pr-4 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-300"
-                  placeholder="john@example.com"
-                />
-              </div>
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="email"
+                name="email"
+                value={formState.email}
+                onChange={handleChange}
+                required
+                placeholder="john@example.com"
+                className="w-full bg-slate-900 border border-slate-700 rounded-2xl pl-12 pr-4 py-4 text-white"
+              />
             </div>
 
+            {/* MESSAGE */}
             <div className="relative">
-              <label htmlFor="message" className="block text-sm font-medium text-slate-300 mb-2">
-                Your Message
-              </label>
-              <div className="relative">
-                <MessageSquare className="absolute left-4 top-6 w-5 h-5 text-slate-400" />
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formState.message}
-                  onChange={handleChange}
-                  required
-                  rows={6}
-                  className="w-full bg-slate-900/50 border border-slate-700 rounded-2xl pl-12 pr-4 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-300 resize-none"
-                  placeholder="Tell us about your project..."
-                />
-              </div>
+              <MessageSquare className="absolute left-4 top-6 w-5 h-5 text-slate-400" />
+              <textarea
+                name="message"
+                value={formState.message}
+                onChange={handleChange}
+                required
+                rows={6}
+                placeholder="Tell us about your project..."
+                className="w-full bg-slate-900 border border-slate-700 rounded-2xl pl-12 pr-4 py-4 text-white resize-none"
+              />
             </div>
 
+            {/* BUTTON */}
             <motion.button
               type="submit"
-              disabled={isSubmitted}
+              disabled={loading || isSubmitted}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={w-full ${
+              className={`w-full px-8 py-4 rounded-2xl font-semibold text-lg flex items-center justify-center gap-2 transition-all
+              ${
                 isSubmitted
-                  ? 'bg-gradient-to-r from-green-500 to-emerald-500'
-                  : 'bg-gradient-to-r from-teal-500 to-cyan-500'
-              } text-slate-900 px-8 py-4 rounded-2xl font-semibold text-lg hover:shadow-xl hover:shadow-teal-500/50 transition-all duration-300 flex items-center justify-center gap-2}
+                  ? "bg-green-500"
+                  : "bg-gradient-to-r from-teal-500 to-cyan-500"
+              }`}
             >
-              {isSubmitted ? (
-                'Message Sent!'
+              {loading ? (
+                "Sending..."
+              ) : isSubmitted ? (
+                "Message Sent!"
               ) : (
                 <>
                   Send Message
